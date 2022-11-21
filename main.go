@@ -49,15 +49,38 @@ func deleteMovieById(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateMovieById(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key := vars["id"]
-	for _, movie := range Movies {
-		if movie.Id == key {
-			// update movie here Movies = append(Movies[:movie.Id], Movies[movie.Id+1:])
-			//Movies[index] =
+	decoder := json.NewDecoder(r.Body)
+	var movie Movie
+	err := decoder.Decode(&movie)
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+		fmt.Println("somerror")
+	}
 
+	for index, value := range Movies {
+		if value.Id == movie.Id {
+
+			Movies[index].Name = movie.Name
+			Movies[index].Released = movie.Released
+			Movies[index].Plot = movie.Plot
+			Movies[index].Rating = movie.Rating
+			Movies[index].Released = movie.Released
+			json.NewEncoder(w).Encode(Movies[index])
+			return
 		}
 	}
+
+	fmt.Fprintf(w, "Error updating the values")
+	return
+	//vars := mux.Vars(r)
+	//key := vars["id"]
+	//for _, movie := range Movies {
+	//	if movie.Id == key {
+	//		// update movie here Movies = append(Movies[:movie.Id], Movies[movie.Id+1:])
+	//		//Movies[index] =
+	//
+	//	}
+	//}
 	//json.NewEncoder(w).Encode()
 }
 
