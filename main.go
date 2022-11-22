@@ -4,20 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"goMovieManagement/Models"
 	"log"
 	"net/http"
 )
 
-type Movie struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Genre    string `json:"genre"`
-	Rating   int    `json:"rating"`
-	Plot     string `json:"plot"`
-	Released bool   `json:"released"`
-}
-
-var Movies []Movie
+var Movies []Models.Movie
 
 func returnAllMovies(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint hit: get all movies")
@@ -50,7 +42,7 @@ func deleteMovieById(w http.ResponseWriter, r *http.Request) {
 
 func updateMovieById(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var movie Movie
+	var movie Models.Movie
 	err := decoder.Decode(&movie)
 	if err != nil {
 		fmt.Fprintf(w, err.Error())
@@ -95,7 +87,7 @@ func addNewMovie(w http.ResponseWriter, r *http.Request) {
 	// append this to our Articles array.
 	//reqBody, _ := ioutil.ReadAll(r.Body)
 
-	var movie Movie
+	var movie Models.Movie
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&movie)
 	if err != nil {
@@ -125,7 +117,7 @@ func handleRequests() {
 }
 
 func main() {
-	Movies = []Movie{
+	Movies = []Models.Movie{
 		{
 			Id:       "1",
 			Name:     "Tower of god",
