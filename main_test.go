@@ -3,12 +3,60 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"goMovieManagement/Models"
+	"errors"
+
+	//"fmt"
+	//"goMovieManagement/models"
+	"goMovieManagement/internals/models"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
+
+func TestGetMovieById(t *testing.T) {
+	method := http.MethodGet
+	endPoint := "/movie"
+	movieNotFoundError := "Movie not found"
+	testCases := []struct {
+		id       string `json:"id"`
+		testName string
+		err      error
+	}{
+		{
+			id:       "1",
+			testName: "valid id",
+			err:      nil,
+		}, {
+			id:       "2",
+			testName: "valid id",
+			err:      nil,
+		}, {
+			id:       "3",
+			testName: "invalid id",
+			err:      errors.New(movieNotFoundError),
+		},
+	}
+	for _, tt := range testCases {
+		target := endPoint + "/" + tt.id
+		movieRequest := httptest.NewRequest(method, target, nil)
+		writer := httptest.NewRecorder()
+		t.Run(tt.testName, func(t *testing.T) {
+			getMovieById(writer, movieRequest)
+			response := writer.Result()
+			_, respError := io.ReadAll(response.Body)
+			if respError != nil {
+				t.Errorf("some error occured : %s", respError)
+			}
+			//else {
+			//	response.Body.
+			//}
+			//} else {
+			//	fmt.Printf("body data is : %s", )
+			//}
+		})
+	}
+}
 
 func TestAddNewMovie(t *testing.T) {
 	method := http.MethodPost
@@ -18,15 +66,15 @@ func TestAddNewMovie(t *testing.T) {
 		httpMethod    string
 		description   string
 		expectedError error
-		body          Models.Movie
+		body          models.Movie
 	}{
 		{
 			endPoint:      endpoint,
 			httpMethod:    method,
 			expectedError: nil,
 			description:   "new movie adding",
-			body: Models.Movie{
-				Id:       "3",
+			body: models.Movie{
+				ID:       "3",
 				Name:     "Police story 1",
 				Genre:    "action",
 				Rating:   5,
