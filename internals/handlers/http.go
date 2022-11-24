@@ -77,7 +77,11 @@ func (h *HttpHandler) AddNewMovie(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Incorrect JSON format")
 		return
 	}
-	movie = h.storeHandler.AddMovieToDB(movie)
+	movie, err = h.storeHandler.AddMovieToDB(movie)
+	if err != nil {
+		fmt.Errorf(err.Error())
+		fmt.Println(err)
+	}
 	json.NewEncoder(w).Encode(movie)
 }
 

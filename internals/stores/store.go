@@ -84,35 +84,35 @@ func (s *Store) UpdateMovieInDB(movie models.Movie) {
 	log.Printf("ID = %d, affected = %d\n", lastId, rowCnt)
 }
 
-func (s *Store) AddMovieToDB(movie models.Movie) models.Movie {
+func (s *Store) AddMovieToDB(movie models.Movie) (models.Movie, error) {
 	stmt, err := s.db.Prepare("INSERT INTO movie(name, rating, plot) VALUES(?, ?,?)")
 	if err != nil {
 		fmt.Println("error adding statement", err)
 		log.Fatal(err)
-		return models.Movie{}
+		return models.Movie{}, err
 	}
 
 	res, err := stmt.Exec(movie.Name, movie.Rating, movie.Plot)
 	if err != nil {
 		fmt.Println("error executing query", err)
 		log.Fatal(err)
-		return models.Movie{}
+		return models.Movie{}, err
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
 		fmt.Println("error lastId")
 		log.Fatal(err)
-		return models.Movie{}
+		return models.Movie{}, err
 	}
 	rowCnt, err := res.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
-		return models.Movie{}
+		return models.Movie{}, err
 	}
 
 	log.Printf("ID = %d, affected = %d\n", lastId, rowCnt)
 	movie.ID = int(lastId)
-	return movie
+	return movie, nil
 
 }
